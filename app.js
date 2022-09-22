@@ -6,9 +6,10 @@ const auth = require('./middlewares/auth'); //this middleware will be acting our
 
 const app = express();
 //middleware
-app.use(express.json());
+app.use(express.json({ limit: '200mb'}));
 app.use(morgan('tiny'));
 app.use(require('cors')());
+
 //routes
 app.get('/protected', auth, (req, res) => {
   return res.status(200).json({ user: req.user }); //if the status is 200 then our token will be matched.

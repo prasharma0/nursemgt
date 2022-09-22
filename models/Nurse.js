@@ -18,6 +18,9 @@ const NurseSchema = new mongoose.Schema({
     type: Number,
     required: [true, 'number is required'],
   },
+  image: {
+    type: String
+  },
   postedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -30,6 +33,7 @@ const validateNurse = (data) => {
     name: Joi.string().min(4).max(50),
     address: Joi.string().min(4).max(100),
     email: Joi.string().email(),
+    image: Joi.any(),
     phone: Joi.number().max(10000000000).required(),
   });
 

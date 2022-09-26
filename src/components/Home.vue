@@ -15,6 +15,7 @@
         </template>
         <template v-if="column.key === 'action'">
           <router-link :to="'/updateNurse/' + record._id">Update</router-link>
+          <button v-on:click="deleteNurse(record._id)">Delete</button>
         </template>
       </template>
     </a-table>
@@ -75,7 +76,20 @@ export default {
   components: {
     Header,
   },
-  async mounted() {
+  methods:{
+    async deleteNurse(id)
+    {
+      const res = await fetch(`http://localhost:5000/api/delete/${id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, 
+          },
+        }); 
+        await res.json();
+        this.loadData();
+    },
+   async loadData(){
+
     let user = localStorage.getItem("user-info");
     this.name = JSON.parse(user).name;
     if (!user) {
@@ -91,9 +105,15 @@ export default {
     if (!result.error) {
       console.warn(result.nurses);
     } else {
-      console.warn(result);
+      console.warn(result.nurses);
     }
     this.nurse = result.nurses;
+
+    }
+  },
+  async mounted() {
+     
+    this.loadData();
   },
 };
 </script>

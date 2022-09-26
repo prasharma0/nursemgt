@@ -37,7 +37,8 @@
         class="file"
       />
 
-      <button v-on:click="addNurse" type="button">Add new Nurse</button>
+      <button v-on:click="addNurse" type="button" v-if="!loading">Add new Nurse</button>
+      <button disabled type="button" v-else>Adding...</button>
     </form>
 
   </div>
@@ -60,6 +61,7 @@ export default {
         email: "",
         phone: "",
       },
+      loading: false
     };
   },
   methods: {
@@ -92,6 +94,7 @@ export default {
 
     async addNurse() {
       // console.log(this.nurse);
+      this.loading = true;
       const res = await fetch("http://localhost:5000/api/nurse", {
         method: "POST",
         headers: {
@@ -101,6 +104,7 @@ export default {
         body: JSON.stringify(this.nurse),
       });
       const result = await res.json();
+      this.loading = false;
       if (result) {
         this.$router.push({ name: "Home" });
       }

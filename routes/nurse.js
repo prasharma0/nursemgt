@@ -56,7 +56,9 @@ router.post("/nurse", auth, async (req, res) => {
 //fetching the list of Nurses.
 router.get("/mynurses", auth, async (req, res) => {
   try {
-    const mynurses = await Nurse.find().populate("postedBy", "-password");
+    const mynurses = await Nurse.find({
+      postedBy: req.user._id,
+    }).populate("postedBy", "-password");
     //console.log(mynurses)
     return res.status(200).json({ nurses: mynurses.reverse() });
   } catch (err) {
@@ -64,7 +66,7 @@ router.get("/mynurses", auth, async (req, res) => {
   }
 });
 
-function mapData(obj1, obj2) {
+ async function mapData(obj1, obj2) {
   if (obj2.name) {
     obj1.name = obj2.name;
   }
@@ -78,7 +80,7 @@ function mapData(obj1, obj2) {
     obj1.address = obj2.address;
   }
   if (obj2.image) {
-    obj1.image = obj2.image;
+  obj1.image = await uploadImage(obj2.image);
   }
   return obj1;
 }
@@ -97,8 +99,7 @@ router.put("/nurse", auth, async (req, res) => {
         .status(401)
         .json({ error: "you can't edit other's Nurse details !" });
     // const updatedData = { ...req.body, id: undefined };
-    const updatedData = mapData({}, req.body);
-
+    const updatedData = await mapData({}, req.body);
     await Nurse.updateOne({ _id: id }, updatedData);
     return res.status(200).json({ ...nurse._doc });
   } catch (err) {

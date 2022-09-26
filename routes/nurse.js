@@ -1,8 +1,8 @@
-const { validateNurse, Nurse } = require('../models/Nurse');
-const auth = require('../middlewares/auth');
-const mongoose = require('mongoose');
-const router = require('express').Router();
-const cloudinary = require('cloudinary');
+const { validateNurse, Nurse } = require("../models/Nurse");
+const auth = require("../middlewares/auth");
+const mongoose = require("mongoose");
+const router = require("express").Router();
+const cloudinary = require("cloudinary");
 
 cloudinary.config({
   cloud_name: process.env.cloud_name,
@@ -27,7 +27,7 @@ async function uploadImage(image) {
   }
 }
 
-router.post('/nurse', auth, async (req, res) => {
+router.post("/nurse", auth, async (req, res) => {
   const { error } = validateNurse(req.body);
 
   if (error) {
@@ -35,7 +35,7 @@ router.post('/nurse', auth, async (req, res) => {
   }
   const { name, address, email, phone, image } = req.body;
   let imageUrl;
-  if(image) {
+  if (image) {
     imageUrl = await uploadImage(image);
   }
   try {
@@ -54,9 +54,9 @@ router.post('/nurse', auth, async (req, res) => {
   }
 });
 //fetching the list of Nurses.
-router.get('/mynurses', auth, async (req, res) => {
+router.get("/mynurses", auth, async (req, res) => {
   try {
-    const mynurses = await Nurse.find().populate('postedBy', '-password');
+    const mynurses = await Nurse.find().populate("postedBy", "-password");
     //console.log(mynurses)
     return res.status(200).json({ nurses: mynurses.reverse() });
   } catch (err) {
@@ -64,14 +64,31 @@ router.get('/mynurses', auth, async (req, res) => {
   }
 });
 
+function mapData(obj1, obj2) {
+  if (obj2.name) {
+    obj1.name = obj2.name;
+  }
+  if (obj2.email) {
+    obj1.email = obj2.email;
+  }
+  if (obj2.phone) {
+    obj1.phone = obj2.phone;
+  }
+  if (obj2.address) {
+    obj1.address = obj2.address;
+  }
+  if (obj2.image) {
+    obj1.image = obj2.image;
+  }
+  return obj1;
+}
+
 //update or edit a nurse
-router.put('/nurse', auth, async (req, res) => {
+router.put("/nurse", auth, async (req, res) => {
   const { id } = req.body;
-  if (!id) return res.status(400).json({ error: 'no id specified.' });
+  if (!id) return res.status(400).json({ error: "no id specified." });
   if (!mongoose.isValidObjectId(id))
-    return res
-      .status(400)
-      .json({ error: 'please enter the valid id.' });
+    return res.status(400).json({ error: "please enter the valid id." });
   try {
     const nurse = await Nurse.findOne({ _id: id });
 
@@ -79,35 +96,31 @@ router.put('/nurse', auth, async (req, res) => {
       return res
         .status(401)
         .json({ error: "you can't edit other's Nurse details !" });
-    const updatedData = { ...req.body, id: undefined };
+    // const updatedData = { ...req.body, id: undefined };
+    const updatedData = mapData({}, req.body);
 
-    const result = await Nurse.updateOne({ _id: id }, updatedData);
+    await Nurse.updateOne({ _id: id }, updatedData);
     return res.status(200).json({ ...nurse._doc });
   } catch (err) {
     console.log(err);
   }
 });
 //delete a nurse
-router.delete('/delete/:id', auth, async (req, res) => {
+router.delete("/delete/:id", auth, async (req, res) => {
   const { id } = req.params;
-  if (!id) return res.status(400).json({ error: 'no id specified.' });
+  if (!id) return res.status(400).json({ error: "no id specified." });
   if (!mongoose.isValidObjectId(id))
-    return res
-      .status(400)
-      .json({ error: 'please enter the valid id.' });
+    return res.status(400).json({ error: "please enter the valid id." });
   try {
     const nurse = await Nurse.findOne({ _id: id.toString() });
-    if (!nurse)
-      return res.status(400).json({ error: 'no nurse found' });
+    if (!nurse) return res.status(400).json({ error: "no nurse found" });
 
     if (req.user._id.toString() !== contact.postedBy._id.toString())
-      return res
-        .status(401)
-        .json({ error: "you can't delete other's nurse!" });
+      return res.status(401).json({ error: "you can't delete other's nurse!" });
     const result = await Nurse.deleteOne({ _id: id });
     const mynurses = await Nurse.find({
       postedBy: req.user._id,
-    }).populate('postedBy', '-password');
+    }).populate("postedBy", "-password");
 
     return res
       .status(200)
@@ -117,15 +130,13 @@ router.delete('/delete/:id', auth, async (req, res) => {
   }
 });
 //getting a single nurse
-router.get('/nurse/:id', auth, async (req, res) => {
+router.get("/nurse/:id", auth, async (req, res) => {
   const { id } = req.params;
 
-  if (!id) return res.status(400).json({ error: 'no id specified.' });
+  if (!id) return res.status(400).json({ error: "no id specified." });
 
   if (!mongoose.isValidObjectId(id))
-    return res
-      .status(400)
-      .json({ error: 'please enter the valid id.' });
+    return res.status(400).json({ error: "please enter the valid id." });
   try {
     const nurse = await Nurse.findById({ _id: id });
     return res.status(200).json({ ...nurse._doc });

@@ -28,7 +28,7 @@ body {
     width: 100px;
 }
 
-.register input, .login input, .addNurse input {
+.register input, .login input, .addNurse input[type='text'], input[type='number'] {
     width: 300px;
     height: 40px;
     padding-left: 20px;
@@ -48,5 +48,11 @@ body {
     background: rgb(21, 29, 32);
     color: #fff;
     cursor: pointer;
+}
+
+.file {
+  display: block;
+  margin-left: 600px;
+  margin-bottom: 30px;
 }
 </style>

@@ -1,46 +1,45 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div>
+    {{ JSON.stringify(stateNurse)}}
     <Header />
     <h1>Hello User, Welcome to Update Nurse page</h1>
     <form class="addNurse">
-      <input
-        type="text"
+      <a-input
         name="name"
-        placeholder="Enter Name"
-        v-model="nurse.name"
+        v-model:value="nurse.name"
+        :defaultValue="stateNurse && stateNurse.name"
       />
-      <input
-        type="text"
+
+      <a-input
         name="address"
-        placeholder="Enter Address"
-        v-model="nurse.address"
+        v-model:value="nurse.address"
+        :defaultValue="stateNurse && stateNurse.address"
       />
-      <input
-        type="text"
+
+      <a-input
         name="email"
-        placeholder="Enter Email"
-        v-model="nurse.email"
+        v-model:value="nurse.email"
+        :defaultValue="stateNurse && stateNurse.email"
       />
-      <input
-        type="number"
+
+      <a-input
         name="phone"
-        placeholder="Enter Phone Number"
-        v-model="nurse.phone"
+        v-model:value="nurse.phone"
+        :defaultValue="stateNurse && stateNurse.phone"
       />
 
-      <input
-      type="file"
-      accept="image/*"
-      @change="handleFileChange"
-    />
+      <input type="file" accept="image/*" @change="handleFileChange" class="file"/>
 
-      <button v-on:click="UpdateNurse" type="button">Update Nurse</button>
+      <button v-on:click="UpdateNurse" type="button" v-if="!loading">Update Nurse</button>
+      <button disabled type="button" v-else>Updating...</button>
     </form>
+
   </div>
 </template>
 <script>
 import Header from "./Header.vue";
+import { mapMutations, mapState } from "vuex";
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
@@ -55,15 +54,21 @@ export default {
         address: "",
         email: "",
         phone: "",
-        image: ''
+        image: "",
       },
+      loading: false
     };
   },
+  computed: {
+    ...mapState(["stateNurse"]),
+  },
   methods: {
+    ...mapMutations(["addNursesToState"]),
+
     async UpdateNurse() {
       let id = this.$route.params.id;
       {
-        // console.log(this.nurse);
+        this.loading = true;
         const res = await fetch("http://localhost:5000/api/nurse", {
           method: "PUT",
           headers: {
@@ -73,45 +78,56 @@ export default {
           body: JSON.stringify({ id, ...this.nurse }),
         });
         const result = await res.json();
+        this.loading = false;
         if (result) {
           this.$router.push({ name: "Home" });
         }
-        console.log("result", result);
       }
     },
 
     handleFileChange(e) {
       if (!e.target.files) {
-        return
+        return;
       }
-      const file = e.target.files[0]
+      const file = e.target.files[0];
       // reader
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
       reader.onload = (e) => {
-        const imageElement = document.createElement('img')
-        imageElement.src = e.target.result
+        const imageElement = document.createElement("img");
+        imageElement.src = e.target.result;
         imageElement.onload = (e) => {
-          const canvas = document.createElement('canvas')
-          const MAX_WIDTH = 600
-          const scaleRatio = MAX_WIDTH / e.target.width
+          const canvas = document.createElement("canvas");
+          const MAX_WIDTH = 600;
+          const scaleRatio = MAX_WIDTH / e.target.width;
           // canvas size
-          canvas.width = MAX_WIDTH
-          canvas.height = e.target.height * scaleRatio
-          const ctx = canvas.getContext('2d')
-          ctx.drawImage(e.target, 0, 0, canvas.width, canvas.height)
-          const srcEncoded = ctx.canvas.toDataURL(e.target, 'image/jpg')
+          canvas.width = MAX_WIDTH;
+          canvas.height = e.target.height * scaleRatio;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(e.target, 0, 0, canvas.width, canvas.height);
+          const srcEncoded = ctx.canvas.toDataURL(e.target, "image/jpg");
           this.nurse.image = srcEncoded;
-        }
-      }
+        };
+      };
     },
   },
 
-  mounted() {
+  async mounted() {
     let user = localStorage.getItem("user-info");
     if (!user) {
       this.$router.push({ name: "SignUp" });
     }
+
+    let id = this.$route.params.id;
+    const res = await fetch(`http://localhost:5000/api/nurse/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    const result = await res.json();
+    this.addNursesToState(result);
   },
 };
 </script>

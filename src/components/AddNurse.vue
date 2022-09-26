@@ -34,6 +34,7 @@
         type="file"
         accept="image/*"
         @change="handleFileChange"
+        class="file"
       />
 
       <button v-on:click="addNurse" type="button">Add new Nurse</button>

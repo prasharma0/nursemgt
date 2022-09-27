@@ -17,14 +17,17 @@
 </template>
 <script>
     import axios from 'axios'
+    import { useToast } from "vue-toastification";
     export default {
         // eslint-disable-next-line vue/multi-word-component-names
         name:'Login',
         data(){
+            const toast = useToast();
             return{
                 email:'',
                 password:'',
-                loading: false
+                loading: false,
+                toast
             }
         },
         methods:{
@@ -35,7 +38,13 @@
                   email:this.email,
                   password:this.password
                 })
-                this.loading = false;
+                 if(result){
+                  this.toast.success("Login up successful!");
+                   this.loading= false;
+                  }else{
+                    this.toast.error("Insert the details correctly!")
+                 }
+            
 
                 if(result.status==200){
                     

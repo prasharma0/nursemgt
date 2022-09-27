@@ -8,7 +8,7 @@
         <input type="password" v-model="password" placeholder="Enter password" required />
         <div>
             <button v-on:click="signUp"  type = "button" v-if="!loading">Sign Up</button>
-            <button disabled type="button" v-else>Logging...</button>
+            <button disabled type="button" v-else>Signing up...</button>
         </div>
        
         <p>
@@ -19,15 +19,18 @@
 
 <script>
     import axios from 'axios'
+    import { useToast } from "vue-toastification";
 
 export default {
     name: 'SignUp',
     data() {
+        const toast = useToast();
         return {
             name: '',
             email: '',
             password: '',
-            loading: false
+            loading: false,
+            toast
         }
     },
     methods: {
@@ -38,8 +41,16 @@ export default {
                 email:this.email,
                 password:this.password
             });
-            console.warn(result);
-            this.loading= false;
+            // console.warn(result);
+           
+            if(result){
+                this.toast.success("Sign up successful!");
+                this.loading= false;
+            }else{
+                this.toast.error("Insert the details correctly!")
+            }
+            
+            
             if(result.status==201)
             {
 

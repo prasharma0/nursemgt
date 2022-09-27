@@ -121,7 +121,7 @@ router.delete('/delete/:id', auth, async (req, res) => {
     if (!nurse)
       return res.status(400).json({ error: 'no nurse found' });
 
-    if (req.user._id.toString() !== contact.postedBy._id.toString())
+    if (req.user._id.toString() !== nurse.postedBy._id.toString())
       return res
         .status(401)
         .json({ error: "you can't delete other's nurse!" });

@@ -2,7 +2,7 @@
 <template>
   <div>
     <Header />
-    <h1>Hello {{ name }}, Welcome to Home page</h1>
+    <h1>Hello {{ name }}, Welcome to Dashboard</h1>
     <a-table :columns="columns" :data-source="nurse" :pagination="false">
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'image'">
@@ -122,5 +122,12 @@ export default {
 td {
   width: 160px;
   height: 40px;
+}
+button {
+    margin-left: 5px;
+    border-color: white;
+    border-radius: 7px;
+    background-color: #fb8686;
+    cursor: pointer;
 }
 </style>

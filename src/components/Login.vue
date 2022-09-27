@@ -1,13 +1,17 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <img class="logo" src="../assets/nurse.png" />
-    <h1> Login </h1>
+    <h2> Welcome to Nurse Management </h2>
+    <p>Please login or sign up to continue.</p>
     <div class="login">
-        <input type="email" v-model="email" placeholder="Enter Email" />
-        <input type="password" v-model="password" placeholder="Enter password" />
-        <button v-on:click="login">Login</button>
+        <input type="email" v-model="email" placeholder="Enter Email" required />
+        <input type="password" v-model="password" placeholder="Enter password" required/>
+        <button v-on:click="login" type = "button" v-if="!loading">Login</button>
+        <button disabled type="button" v-else>Logging...</button>
+        <!-- <button v-on:click="addNurse" type="button" v-if="!loading">Add new Nurse</button> -->
+      
         <p>
-            <router-link to = "/signup" >Sign Up</router-link>
+            Not registered yet? <router-link to = "/signup" >Sign Up</router-link>
         </p> 
     </div>
 </template>
@@ -19,16 +23,19 @@
         data(){
             return{
                 email:'',
-                password:''
+                password:'',
+                loading: false
             }
         },
         methods:{
             async login(){
+                this.loading=true;
                 let result = await axios.post("http://localhost:5000/api/login",
                 {
                   email:this.email,
                   password:this.password
                 })
+                this.loading = false;
 
                 if(result.status==200){
                     
@@ -37,6 +44,7 @@
                     localStorage.setItem("user-info", JSON.stringify(result.data.user));
                     this.$router.push({name:'Home'});
                 }
+                
                 
                 console.warn(result);
             }

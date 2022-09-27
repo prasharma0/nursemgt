@@ -4,7 +4,7 @@
         <router-link to ="/">Home</router-link>
         <router-link to ="/addnurse">Add Nurse</router-link>
        
-        <a v-on:click="logout" href="#">Logout</a>
+        <a class="logout" v-on:click="logout" href="#">Logout</a>
     </div>
 </template>
 
@@ -38,5 +38,11 @@
 .nav a:hover{
     background: #ddd;
     color: #333;
+}
+a.logout {
+    margin-left: 20rem;
+}
+a {
+    margin-left:2rem;
 }
 </style>

@@ -1,13 +1,18 @@
 <template>
     <img class="logo" src="../assets/nurse.png" />
-    <h1> Sign Up</h1>
+    <h2> Welcome to Nurse Management </h2>
+    <p>Please login or sign up to continue.</p>
     <div class="register">
-        <input type="text" v-model="name" placeholder="Enter Name" />
-        <input type="email" v-model="email" placeholder="Enter Email" />
-        <input type="password" v-model="password" placeholder="Enter password" />
-        <button v-on:click="signUp" >Sign Up</button>
+        <input type="text" v-model="name" placeholder="Enter Name" required />
+        <input type="email" v-model="email" placeholder="Enter Email" required />
+        <input type="password" v-model="password" placeholder="Enter password" required />
+        <div>
+            <button v-on:click="signUp"  type = "button" v-if="!loading">Sign Up</button>
+            <button disabled type="button" v-else>Logging...</button>
+        </div>
+       
         <p>
-            <router-link to = "/login" >Login</router-link>
+        Go Back to <router-link to = "/login" >Login</router-link>
         </p> 
     </div>
 </template>
@@ -22,16 +27,19 @@ export default {
             name: '',
             email: '',
             password: '',
+            loading: false
         }
     },
     methods: {
         async signUp() {
+            this.loading = true;
             let result = await axios.post("http://localhost:5000/api/register",{
                 name: this.name,
                 email:this.email,
                 password:this.password
             });
             console.warn(result);
+            this.loading= false;
             if(result.status==201)
             {
 

@@ -2,31 +2,35 @@
 <template>
   <div>
     <Header />
-    <h1>Hello User, Welcome to adding Nurse page</h1>
+    <h1>You can add nurse here !</h1>
 
     <form class="addNurse">
       <input
         type="text"
         name="name"
         placeholder="Enter Name"
+        required
         v-model="nurse.name"
       />
       <input
         type="text"
         name="address"
         placeholder="Enter Address"
+        required
         v-model="nurse.address"
       />
       <input
         type="text"
         name="email"
         placeholder="Enter Email"
+        required
         v-model="nurse.email"
       />
       <input
         type="number"
         name="phone"
         placeholder="Enter Phone Number"
+        required
         v-model="nurse.phone"
       />
 
@@ -34,6 +38,7 @@
         type="file"
         accept="image/*"
         @change="handleFileChange"
+        required
         class="file"
       />
 

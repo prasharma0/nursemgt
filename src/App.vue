@@ -37,15 +37,16 @@ body {
     margin-right: auto;
     margin-left: auto;
     border-radius: 10px;
-    border: 1px solid rgb(41, 45, 47);
+    border: 1px solid #f5f5f5;
+    background-color: #f0f0f0;
 }
 
 .register button, .login button, .addNurse button {
-    width: 320px;
+  width: 310px;
     height: 40px;
-    border-radius: 10px;
-    border: 1px solid rgb(41, 45, 47);
-    background: rgb(21, 29, 32);
+    /* border-radius: 10px; */
+    /* border: 1px solid rgb(41, 45, 47); */
+    background: #52c41a;
     color: #fff;
     cursor: pointer;
 }
